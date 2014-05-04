@@ -1,94 +1,80 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import errno
+import os
+import os.path
+
 import rpyc
 from fuse import FUSE, FuseOSError, Operations
 
 class RPYCFuse(Operations):
 	def __init__(self):
-		#client = rpyc.connect("localhost", 11025)
-		#client.root
-		#print client.root.Main.printf("Hello world!!")
-		pass
- 
+		self.client = rpyc.connect("localhost", 11025)
+
 	# +============================
 	# | Filesystem method
 	# +============================
 	def access(self, path, mode):
-		raise FuseOSError(errno.EACCES)
- 
-	def chmod(self, path, mode):
-		raise FuseOSError(errno.EACCES)
- 
-	def chown(self, path, mode):
-		raise FuseOSError(errno.EACCES)
- 
+		result = self.client.root.access(path, mode)
+		return result
+
+	chmod		= None
+	chown		= None
 	def getattr(self, path, fh=None):
-		raise FuseOSError(errno.EACCES)
- 
-	def getxattr(self, path, fh=None):
-		raise FuseOSError(errno.EACCES)
- 
+		result = self.client.root.getattr(path, fh)
+		return result
+
+	getxattr	= None
+
 	def readdir(self, path, fh):
-		raise FuseOSError(errno.EACCES)
-		#return ['.', '..'] + os.listdir(path)
- 
-	def readlink(self, path):
-		raise FuseOSError(errno.EACCES)
- 
-	def mknod(self, path, mode, dev):
-		raise FuseOSError(errno.EACCES)
- 
-	def mkdir(self, path, mode):
-		raise FuseOSError(errno.EACCES)
- 
+		result = self.client.root.readdir(path, fh)
+		return result
+
+	readlink	= None
+	mknod		= None
+
 	def rmdir(self, path):
-		raise FuseOSError(errno.EACCES)
- 
-	def statfs(self, path):
-		raise FuseOSError(errno.EACCES)
- 
+		return self.client.root.rmdir(path)
+
 	def unlink(self, path):
-		raise FuseOSError(errno.EACCES)
- 
-	def symlink(self, target, source):
-		raise FuseOSError(errno.EACCES)
- 
-	def rename(self, old, new):
-		raise FuseOSError(errno.EACCES)
- 
-	def link(self, target, source):
-		raise FuseOSError(errno.EACCES)
- 
+		return self.client.root.unlink(path)
+
+	def mkdir(self, path, mode):
+		result = self.client.root.mkdir(path, mode)
+		return result
+
+	statfs		= None
+	symlink		= None
+	rename		= None
+	link		= None
 	def utimens(self, path, times=None):
-		raise FuseOSError(errno.EACCES)
+		return None
  
 	# +============================
 	# | File method
 	# +============================
-	def open(self, path, flags):
-		raise FuseOSError(errno.EACCES)
- 
+	def open(self, path, flags, mode=None):
+		return self.client.root.open(path, flags, mode)
+
 	def create(self, path, mode):
-		raise FuseOSError(errno.EACCES)
- 
-	def read(self, path, size, offset, fh):
-		raise FuseOSError(errno.EACCES)
- 
-	def write(self, path, data, offset, fh):
-		raise FuseOSError(errno.EACCES)
- 
-	def truncate(self, path, length, fh=None):
-		raise FuseOSError(errno.EACCES)
- 
+		return self.open(path, os.O_WRONLY | os.O_CREAT, mode)
+
+	def read(self, path, length, offset, fh):
+		return self.client.root.read(path, length, offset, fh)
+
+	def write(self, path, buf, offset, fh):
+		return self.client.root.write(path, buf, offset, fh)
+
+	truncate	= None
+
 	def flush(self, path, fh):
-		raise FuseOSError(errno.EACCES)
- 
-	def release(self, path, fh):
-		raise FuseOSError(errno.EACCES)
- 
-	def fsync(self, path, datasync, fh):
-		raise FuseOSError(errno.EACCES)
+		return self.client.root.flush(path, fh)
+
+	release		= None
+	fsync		= None
 
 if __name__ == "__main__":
-	FUSE(RPYCFuse(), './mnt', noempty=True)
+	mntpoint = os.path.abspath('%s/mnt' %(os.path.dirname(os.path.abspath(__file__))))
+        print "I will mount %s" %(mntpoint)
+        FUSE(RPYCFuse(), mntpoint, foreground=True, nonempty=True, allow_other=True)
 
