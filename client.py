@@ -9,7 +9,8 @@ from fuse import FUSE, FuseOSError, Operations
 
 class RPYCFuse(Operations):
 	def __init__(self):
-		self.client = rpyc.connect("localhost", 11025)
+		#self.client = rpyc.connect("localhost", 11025)
+		self.client = rpyc.connect("10.3.1.40", 11025)
 
 	# +============================
 	# | Filesystem method

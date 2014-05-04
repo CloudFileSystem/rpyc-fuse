@@ -8,7 +8,7 @@ class RPYCFuseService(rpyc.Service):
 	def getpath(self, path):
 		return '/home/naoya/Desktop/rpyc-fuse/srv' + path
 
- 	def on_connect(self):
+	def on_connect(self):
 		# code that runs when a connection is created
 		# (to init the serivce, if needed)
 		print "Server Connection OK!!"
@@ -38,8 +38,7 @@ class RPYCFuseService(rpyc.Service):
 
 	def exposed_access(self, path, mode):
 		full_path = self.getpath(path)
-                if not os.access(full_path, mode):
-                        raise FuseOSError(errno.EACCES)
+		return os.access(full_path, mode)
 
 	def exposed_rmdir(self, path):
 		full_path = self.getpath(path)
