@@ -10,7 +10,8 @@ fi
 read dist_hint < /etc/issue
 path=`dirname $0`
 dist_name=`echo $dist_hint | awk '{print $1}'`
-deploy_script="$path/dist/${dist_name,,}.sh"
+deploy_script="$path/dist/base/${dist_name,,}.sh"
+pip_script="$path/dist/pypy/pip.sh"
 
 # ディストリビューションのデプロイスクリプトの存在確認
 if [ -f $deploy_script ]
@@ -20,6 +21,17 @@ then
 else
 	# error message
 	echo "Deploy script($deploy_script) not found!!"
+	exit
+fi
+
+# pypyのデプロイスクリプトの存在確認
+if [ -f $pip_script ]
+then
+	# get source
+	source $pip_script
+else
+	# error message
+	echo "Pypy script($pip_script) not found!!"
 	exit
 fi
 
