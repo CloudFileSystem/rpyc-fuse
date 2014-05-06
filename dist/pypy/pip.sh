@@ -17,5 +17,11 @@ pip install fusepy
 #
 pip install rpyc
 
+#
+# install cython
+#
+vpath="`which virtualenv`/"
+pip install --install-option="--prefix=$vpath" cython
+
 # vim: set nu ts=2 autoindent : #
 
