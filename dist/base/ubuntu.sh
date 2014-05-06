@@ -14,11 +14,6 @@ sudo apt-get -y install fuse
 sudo apt-get -y install libfuse-dev
 
 #
-# install pip
-#
-easy_install pip
-
-#
 # install virtualenv
 #
 sudo pip install virtualenv
