@@ -10,7 +10,7 @@ fi
 read dist_hint < /etc/issue
 dist_name=`echo $dist_hint | awk '{print $1}'`
 deploy_script="./dist/base/${dist_name,,}.sh"
-python_deply_script="./dist/pypy/install.sh"
+python_deply_script="./dist/pypy/pip.sh"
 
 # ディストリビューションのデプロイスクリプトの存在確認
 if [ -f $deploy_script ]
